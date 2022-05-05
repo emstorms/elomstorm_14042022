@@ -3,6 +3,7 @@ const mongoose = require ('mongoose');
 const UserModel = require('./models/UserModel');
 const bcrypt = require('bcrypt');
 const authConroller = require('./controllers/authController');
+const userRoutes = require("./routes/authRoute");
 
 const app = express();
 //Connexion to db
@@ -35,6 +36,9 @@ app.use((req, res, next) => {
     next();
   });
   
+  //using router
+  app.use("/api/auth",userRoutes);
+
   //POST looking for message : string. Het hashed pasword and add in database
 
   app.post('signup',authConroller.signup);

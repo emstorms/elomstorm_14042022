@@ -38,21 +38,24 @@ exports.signup = (req,res) =>{
     //hash then save the user model
     // bcrypt.hash(req.body.password,10)
     // .then(hash => {
-    //     const user = new userModel({
-    //         email:req.body.email,
-    //         password:hash
-    //     })
+        const user = new UserModel({
+            email:req.body.email,
+            // password:hash
+            password : req.body.password
+        });
         //saving the user
-        // user.save()
-        // .then(()=> res.status(201).json({message :"Votre compte a bien été créee"}))
-        // .catch(error => res.status(400).json({error}))
-        // console.log("LOG USer ==>");
-        // console.log(user);
+        user.save()
+        .then(()=> res.status(201).json({message :"Votre compte a bien été créee"}))
+        .catch(error => {console.log("ERROOR");console.log(error)})
+        // .catch(error => res.status(400).json({error}.send(console.log(error))))
+        console.log("LOG USer ==>");
+        console.log(user);
     // })
     // .catch(error => res.status(500).json({error : error}));
     // .catch(console.log(error));
-    console.log(req.body);
-    res.json({message:"quoi"});
+    // console.log("REQ BODY ++++++++");
+    // console.log(req.body);
+    // res.json({message:"quoi"});
     
 };
 
