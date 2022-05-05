@@ -15,7 +15,7 @@ exports.login = (req, res, next) => {
                 if (!email) {
                     return res.status(401).json({ message: 'Vous n\'avez pas encore de compte, souhaite vous en créer un autre?' });
                 }
-                //if user exist compare password
+                //if user exists compare password
                 bcrypt.compare(req.body.password, email.password)
                     .then(isCorrectPasswd => {
                         res.status(200).json({
@@ -27,6 +27,8 @@ exports.login = (req, res, next) => {
                             )
                         })
                         console.log("=>>>>>>LOGIN THAT iS OK");
+                        
+                        next();
                     })
                     .catch(error => res.status(400).json({ error }));
             })
@@ -43,7 +45,7 @@ exports.login = (req, res, next) => {
 
 
 //subscription
-exports.signup = (req, res) => {
+exports.signup = (req, res,next) => {
     //hash then save the user model
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -58,6 +60,7 @@ exports.signup = (req, res) => {
                 // .catch(error => {console.log("ERROOR\n=======>");console.log(error))
                 .catch(error => res.status(400).json({ error }).send(console.log(error)));
             console.log(user);
+            next();
         })
         .catch(error => res.status(500).json({ error: error }));
 };

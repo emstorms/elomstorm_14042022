@@ -4,6 +4,7 @@ const UserModel = require('./models/UserModel');
 const bcrypt = require('bcrypt');
 const authConroller = require('./controllers/authController');
 const userRoutes = require("./routes/authRoute");
+const verifications = require("./middelware/verifications");
 
 const app = express();
 //Connexion to db
@@ -41,8 +42,9 @@ app.use((req, res, next) => {
 
   //POST looking for message : string. Het hashed pasword and add in database
 
-  app.post('/signup',authConroller.signup);
-  app.post('/login',authConroller.login);
+  // app.post('/signup',authConroller.signup);
+  // app.post('/login',verifications.checkToken,authConroller.login);
+  // app.post('/login',verifications);
 
   
 
