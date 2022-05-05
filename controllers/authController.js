@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 // const User = require('../models/UserModel');
-const UserModel = require('../models/User');
-const token = require('jsonwebtoken');
+const UserModel = require('../models/UserModel');
+// const token = require('jsonwebtoken');
 
-
+/*
 //connecting to account
 exports.login = (req,res,next) =>{
     //chek in DB if the email exist. 
@@ -30,23 +30,30 @@ exports.login = (req,res,next) =>{
       })
       .catch(error => res.status(400).json({error}))
 };
+*/
+
 
 //subscription
-exports.signup = (req,res,next) =>{
+exports.signup = (req,res) =>{
     //hash then save the user model
-    bcrypt.hash(req.body.password,10)
-    .then(hash => {
-        const user = new userModel({
-            email:req.body.email,
-            password:hash
-        });
+    // bcrypt.hash(req.body.password,10)
+    // .then(hash => {
+    //     const user = new userModel({
+    //         email:req.body.email,
+    //         password:hash
+    //     })
         //saving the user
-        user.save()
-        .then(()=> res.status(201).json({message :"Votre compte a bien été créee"}))
-        .catch(error => res.status(400).json({error}))
-    })
-    .catch(error => res.status(500).json({error}));
-
+        // user.save()
+        // .then(()=> res.status(201).json({message :"Votre compte a bien été créee"}))
+        // .catch(error => res.status(400).json({error}))
+        // console.log("LOG USer ==>");
+        // console.log(user);
+    // })
+    // .catch(error => res.status(500).json({error : error}));
+    // .catch(console.log(error));
+    console.log(req.body);
+    res.json({message:"quoi"});
     
 };
+
 
