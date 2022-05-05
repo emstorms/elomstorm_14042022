@@ -41,7 +41,8 @@ app.use((req, res, next) => {
 
   //POST looking for message : string. Het hashed pasword and add in database
 
-  app.post('signup',authConroller.signup);
+  app.post('/signup',authConroller.signup);
+  app.post('/login',authConroller.login);
 
   
 
