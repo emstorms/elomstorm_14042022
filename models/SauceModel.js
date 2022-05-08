@@ -8,13 +8,14 @@ const sauceSchema = ({
     description:{type:String, required:true},
     mainPepper:{type:String, required:true},
     imageUrl:{type:String, required:true},
-    heat:{type:Number, required:true}, //set [1,10]
-    likes:{type:Number, required:true}, //set [1,10]
+    heat:{type:Number, required:true ,min:[1,'Heat must be at least 1, you got {VALUE}'],max:[10,'Heat must be at most 10, you gave {VALUE}']}, //set [1,10]
+    likes:{type:Number, required:true,}, //set [1,10]
     dislikes:{type:Number, required:true}, 
     userLiked:{type:[String], required:true},
     usersDisliked:{type:[String]} 
 
 })
+
 
 module.exports = mongoose.model('SauceModel',sauceSchema);
 
