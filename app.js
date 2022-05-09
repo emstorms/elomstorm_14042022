@@ -3,8 +3,14 @@ const mongoose = require ('mongoose');
 const UserModel = require('./models/UserModel');
 const bcrypt = require('bcrypt');
 const authConroller = require('./controllers/authController');
+
+//Routers FIles
 const userRoutes = require("./routes/authRoute");
+const sauceRoute = require("./routes/sauceRoute");
+
 const verifications = require("./middelware/verifications");
+//Chemin static pour les images
+const path = require("path");
 
 const app = express();
 //Connexion to db
@@ -37,8 +43,12 @@ app.use((req, res, next) => {
     next();
   });
   
+  //Path for Image Sauce
+  app.use('/images',express.static(path.join(__dirname,'images_folder')));
   //using router
   app.use("/api/auth",userRoutes);
+  //Using Sauce request
+  app.use("/api/sauces",sauceRoute);
 
   //POST looking for message : string. Het hashed pasword and add in database
 

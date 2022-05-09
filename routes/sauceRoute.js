@@ -2,12 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const sauceMiddleware = require('../controllers/sauce');
+const sauceController = require('../controllers/sauceController');
+const verification = require("../middelware/verifications");
 
-router.get('/api/sauces', sauceMiddleware.currentSauce);
-router.get('/api/sauces/:id',sauceMiddleware.listSauce);
-router.post('/api/sauces',sauceMiddleware.initializeSauce);
-router.put('/api/sauces/:id',sauceMiddleware.updateSauce);
-router.delete('/api/sauce/:id',sauceMiddleware.deleteSauce);
+router.post('/',verification.checkToken,sauceController.initializeSauce);
+// router.get('/api/sauces', sauceController.currentSauce);
+// router.get('/api/sauces/:id',sauceController.listSauce);
+// router.put('/api/sauces/:id',sauceController.updateSauce);
+// router.delete('/api/sauce/:id',sauceController.deleteSauce);
 
 module.exports = router;

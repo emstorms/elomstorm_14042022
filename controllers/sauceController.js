@@ -1,6 +1,6 @@
 //Sauce controllers
 
-const sauceModel = require('../models/Sauce');
+const sauceModel = require('../models/SauceModel');
 
 exports.listSauce = (req,res,next) => {
     //Return all Sauces In the Db Using SauceModel.Find
@@ -11,7 +11,13 @@ exports.currentSauce = (req,res,next) =>{
 };
 
 exports.initializeSauce = (req,res,next) => {
-    //Edit correctly the img Url and set  likes and disliks to zero Then save in database.
+    //Edit correctly the img Url and set  likes and dislikes to zero Then save in database.
+    console.log("\n==========SAUUUUUUCE init==========");
+
+
+    
+    res.status(201).json({message: "Sauce en création"});
+    next();
 };
 
 

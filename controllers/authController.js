@@ -18,6 +18,10 @@ exports.login = (req, res, next) => {
                 //if user exists compare password
                 bcrypt.compare(req.body.password, email.password)
                     .then(isCorrectPasswd => {
+                        if(!isCorrectPasswd){
+                            return res.status(401).json({message:"Votre mot de passe est incorrect"});
+                        }
+                        console.log("mot de passe correct");
                         res.status(200).json({
                             userId: email._id,
                             token: token.sign(
@@ -27,6 +31,7 @@ exports.login = (req, res, next) => {
                             )
                         })
                         console.log("=>>>>>>LOGIN THAT iS OK");
+                        
                         
                         next();
                     })
