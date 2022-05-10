@@ -1,64 +1,73 @@
 //Check if the user id that send the request is the same as the subbscription's one
 const verif_user_token = require("jsonwebtoken");
 const userDb = require('../models/UserModel')
+
 //We got 2 kind of verification
-    //First -> only members can see all Sauce check in token if user id exist in db
-    //second -> only sauce Owner can Modify and delete his Sauce
+//First -> only members can see all Sauce check in token if user id exist in db
+//second -> only sauce Owner can Modify and delete his Sauce
 
-exports.checkTokenIsMember = (req,res,next) => {
-    try{
-        console.log("+++++++CHECKing  COMPARE TOKEN user ID with DB iD");
-        compareTokenID_DbID(req,userDb);
+exports.checkTokenIsMember = (req, res, next) => {
+    try {
 
-    }catch(error){
-        res.status(400).json({message:`TOKEN Error ${error}` })
-    };
-    
-    
+        if(userExistsWithTokenID(req, res)){
+            //  res.status(200).json({ message: "USer is found" });
+             console.log("User found");
+             next();
+        }else{
+            //If TOken does'nt match Db user, throw error
+            console.log("TOKEN CHECK FAIL");
+            throw new Error("You Have to Create an account to have access to this page");
+        }
+
+    }catch (err) {
+        console.log("IN CATCH Error IS TROWN");
+        res.status(401).json({message : "AuthoriZE FAIL"}).send(console.log(`Authorize FAILED Error Message ${err}`));
+    }
+   
+
+
 }
 
-const compareTokenID_DbID = (req,dbName)=>{
-    console.log("FUNCTION THAt Check if ID FROM TOKEN exists in DB");
+function userExistsWithTokenID(req, res) {
+
+    const t = 3;
+    if(t == 2){
+        throw new Error("T must not be 2");
+    }
+    
     if (!req.headers.hasOwnProperty("authorization")) {
         //Throw error // Request may be sent from bad form or source
         throw new Error("PAs de autorize dans la requete Veuillez à Utiliser le formulaire de connexion pour vous connecter avant de poursuivre");
     }
+   
     const is_token = (req.headers.authorization.split(' ')[1]);
-    console.log(is_token);
-    if(is_token != ""){
-        //is token is not empty decode
-        const decode = verif_user_token.verify(is_token,process.env.TOKEN_ENCODE_CODE);
-        console.log("DECODING TOKEN => TOken contain");
-        console.log(decode);
-        console.log(decode.userId);
-        console.log("REQ BODY IS");
-        // console.log(req);
-        //Searching user in db
-        userDb.findOne({_id : decode.userId})
-        .then(theUser => {
-            console.log("Printing Users");
-            console.log(theUser)
-
-        })
-        
-        .catch(error => console.log(error));
-    
-        //Compare user in in token with the request id
-/*           if(decode.userId == req.body.id){
-            console.log("We Can continue to end point");
-            res.status(200).json({message : "The requester IS the Owner "});
-            //go to next middlware
-            next();
-        }else{
-            console.log("Requester IS NOT the owner req.body AND request-id is");
-            console.log(req.body);
-            console.log(decode.userId);
-
-            throw new Error("Error :> Requester IS NOT the owner");
-        }
-*/
+    if (is_token == "") {
+          console.log("TOken is empty");
+          throw new Error("THat Token is empty");
     }
+        //is token is not empty decode
+        console.log("\nIM LOGGGING THE TOKEN");
+        console.log(is_token);
+        const decode = verif_user_token.verify(is_token, process.env.TOKEN_ENCODE_CODE);  
+    //Searching user in db
+         userDb.findOne({ _id: decode.userId })
+            .then(theUser => {
+                  //IF user does'nt exists He cant see all Sauce
+                    if(!theUser) {
+                        console.log(" Vous devriez créer un compte avant de poursuivre sur cette page");
+                        throw new Error("Vous devriez créer un compte avant de poursuivre sur cette page");
+                      }
+                      
+              })
+              .catch(error => {
+                  res.json({ error: error }).send(error => console.log(error));
+                  throw new Error("User does'nt exist in Database"); 
+                  
+                })
+    return true;
+ 
 }
+
 
 
 
@@ -83,30 +92,31 @@ exports.checkToken = (req, res, next) => {
             //Getting the token's string
             const is_token = (req.headers.authorization.split(' ')[1]);
             console.log(is_token);
-            if(is_token != ""){
+            if (is_token != "") {
                 //is token is not empty decode
-                const decode = verif_user_token.verify(is_token,process.env.TOKEN_ENCODE_CODE);
+                const decode = verif_user_token.verify(is_token, process.env.TOKEN_ENCODE_CODE);
                 console.log("DECODING TOKEN => TOken contain");
                 console.log(decode);
                 console.log(decode.userId);
                 console.log("REQ BODY IS");
-                console.log(req);
+                console.log(req.body);
                 //Compare user in in token with the request id
-     /*           if(decode.userId == req.body.id){
-                    console.log("We Can continue to end point");
-                    res.status(200).json({message : "The requester IS the Owner "});
-                    //go to next middlware
-                    next();
-                }else{
-                    console.log("Requester IS NOT the owner req.body AND request-id is");
-                    console.log(req.body);
-                    console.log(decode.userId);
+                /*           if(decode.userId == req.body.id){
+                               console.log("We Can continue to end point");
+                               res.status(200).json({message : "The requester IS the Owner "});
+                               //go to next middlware
+                               next();
+                           }else{
+                               console.log("Requester IS NOT the owner req.body AND request-id is");
+                               console.log(req.body);
+                               console.log(decode.userId);
+           
+                               throw new Error("Error :> Requester IS NOT the owner");
+                           }
+               */
+              next();
 
-                    throw new Error("Error :> Requester IS NOT the owner");
-                }
-    */
-
-            }else{
+            } else {
                 throw new Error("Token is empty");
             }
             // console.log("Decode");
@@ -115,7 +125,7 @@ exports.checkToken = (req, res, next) => {
             // console.log("userID");
             // console.log(decode.userId);
         }
-        
+
         // console.log(typeof is_token);
         // if(typeof is_token == undefined){
         //     console.log("Token is undefined");
@@ -123,13 +133,13 @@ exports.checkToken = (req, res, next) => {
         //     console.log("Token is not present");
         // }
 
-       
+
         // console.log(decode.userId);
         // const token_id = reqAutorization.split(' ')[1];
         // res.json({message :`message => le token est ${token_id}`});
 
 
-        
+
 
     } catch (err) {
         console.log(err);

@@ -10,9 +10,13 @@ router.post('/',multer_1_img,sauceController.initializeSauce);
 // router.get('/',verification.checkToken, sauceController.currentSauce);
 // router.put('/:id',verification.checkToken,sauceController.updateSauce);
 // router.delete('/:id',verification.checkToken,sauceController.deleteSauce);
+
+// router.get('/',verification.checkTokenIsMember);
+// router.get('/',sauceController.listSauce);
 router.get('/',verification.checkTokenIsMember,sauceController.listSauce);
+router.get('/:id',verification.checkTokenIsMember,sauceController.currentSauce);
+
 // router.get('/',verification.checkToken,sauceController.listSauce);
-router.get('/:id',sauceController.currentSauce);
 
 
 module.exports = router;

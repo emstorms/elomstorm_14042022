@@ -48,19 +48,17 @@ app.use((req, res, next) => {
             **********/
   //using router
   
+  /***SAUCES-IMAGE***/
+  //Path for Image Sauce
+  app.use('/images',express.static(path.join(__dirname,'images_folder')));
+  
   /***AUTHENTIFICATION***/
   app.use("/api/auth",userRoutes);
   
   /***SAUCES***/
   //Using Sauce request
   app.use("/api/sauces",sauceRoute);
-  
-  /***SAUCES-IMAGE***/
-  //Path for Image Sauce
-  app.use('/images',express.static(path.join(__dirname,'images_folder')));
-  console.log("dirname");                            
-  console.log(__dirname);
-
+ 
   //POST looking for message : string. Het hashed pasword and add in database
 
   // app.post('/signup',authConroller.signup);
