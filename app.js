@@ -13,6 +13,9 @@ const verifications = require("./middelware/verifications");
 const path = require("path");
 
 const app = express();
+
+// can get Json data
+app.use(express.json());
 //Connexion to db
 //Try morgan that log request details
 const morgan = require('morgan');
@@ -23,9 +26,6 @@ const morgan = require('morgan');
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-
-// can get Json data
-app.use(express.json());
 
 // console.log(morgan);
 app.use(morgan('dev'));
@@ -42,13 +42,22 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
   });
-  
+
+            /*********
+              ROUTES
+            **********/
+  //using router
+  /***SAUCES-IMAGE***/
   //Path for Image Sauce
   app.use('/images',express.static(path.join(__dirname,'images_folder')));
-  //using router
+  
+  /***AUTHENTIFICATION***/
   app.use("/api/auth",userRoutes);
+
+  /***SAUCES***/
   //Using Sauce request
   app.use("/api/sauces",sauceRoute);
+  
 
   //POST looking for message : string. Het hashed pasword and add in database
 

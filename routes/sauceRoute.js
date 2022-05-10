@@ -4,11 +4,15 @@ const express = require('express');
 const router = express.Router();
 const sauceController = require('../controllers/sauceController');
 const verification = require("../middelware/verifications");
+const multer_1_img = require('../controllers/loading_image');
 
-router.post('/',verification.checkToken,sauceController.initializeSauce);
-// router.get('/api/sauces', sauceController.currentSauce);
-// router.get('/api/sauces/:id',sauceController.listSauce);
-// router.put('/api/sauces/:id',sauceController.updateSauce);
-// router.delete('/api/sauce/:id',sauceController.deleteSauce);
+router.post('/',multer_1_img,sauceController.initializeSauce);
+// router.get('/',verification.checkToken, sauceController.currentSauce);
+// router.put('/:id',verification.checkToken,sauceController.updateSauce);
+// router.delete('/:id',verification.checkToken,sauceController.deleteSauce);
+router.get('/',sauceController.listSauce);
+// router.get('/',verification.checkToken,sauceController.listSauce);
+router.get('/:id',sauceController.currentSauce);
+
 
 module.exports = router;

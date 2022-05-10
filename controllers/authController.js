@@ -13,6 +13,7 @@ exports.login = (req, res, next) => {
         UserModel.findOne({ email: req.body.email })
             .then(email => {
                 if (!email) {
+                    console.log(req.body);
                     return res.status(401).json({ message: 'Vous n\'avez pas encore de compte, souhaite vous en créer un autre?' });
                 }
                 //if user exists compare password
