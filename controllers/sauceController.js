@@ -4,7 +4,7 @@ const { json } = require('express');
 const SauceModel = require('../models/SauceModel');
 const sauceModel = require('../models/SauceModel');
 //Import loading image contollers
-
+/*
 const sauceSchema = ({
     userId :{type: String, required:true, unique:true},
     name : {type: String, required:true},
@@ -35,16 +35,17 @@ const testSauce ={
 }
 const arrSauce =[];
 arrSauce.push(testSauce);
-
+*/
 exports.listSauce = (req,res,next) => {
     //Return all Sauces In the Db Using SauceModel.Find
     console.log("here we show the list of all Sauces");
+       // console.log("\nSHOWING REQ.BODY IN list SAUCE controller");
+    console.log(req.body);
     SauceModel.find()
     .then(listSauce => res.status(200).json(listSauce))
     .catch(error => res.status(400).json({message:"Cant show list of Sauces"}));
 
-    // console.log("\nSHOWING REQ.BODY IN list SAUCE controller");
-    // console.log(req.body);
+ 
     
     // console.log("\nSHOWING REQ.headers IN list SAUCE controller");
     // console.log(req.headers);

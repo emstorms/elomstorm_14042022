@@ -1,5 +1,66 @@
 //Check if the user id that send the request is the same as the subbscription's one
 const verif_user_token = require("jsonwebtoken");
+const userDb = require('../models/UserModel')
+//We got 2 kind of verification
+    //First -> only members can see all Sauce check in token if user id exist in db
+    //second -> only sauce Owner can Modify and delete his Sauce
+
+exports.checkTokenIsMember = (req,res,next) => {
+    try{
+        console.log("+++++++CHECKing  COMPARE TOKEN user ID with DB iD");
+        compareTokenID_DbID(req,userDb);
+
+    }catch(error){
+        res.status(400).json({message:`TOKEN Error ${error}` })
+    };
+    
+    
+}
+
+const compareTokenID_DbID = (req,dbName)=>{
+    console.log("FUNCTION THAt Check if ID FROM TOKEN exists in DB");
+    if (!req.headers.hasOwnProperty("authorization")) {
+        //Throw error // Request may be sent from bad form or source
+        throw new Error("PAs de autorize dans la requete Veuillez à Utiliser le formulaire de connexion pour vous connecter avant de poursuivre");
+    }
+    const is_token = (req.headers.authorization.split(' ')[1]);
+    console.log(is_token);
+    if(is_token != ""){
+        //is token is not empty decode
+        const decode = verif_user_token.verify(is_token,process.env.TOKEN_ENCODE_CODE);
+        console.log("DECODING TOKEN => TOken contain");
+        console.log(decode);
+        console.log(decode.userId);
+        console.log("REQ BODY IS");
+        // console.log(req);
+        //Searching user in db
+        userDb.findOne({_id : decode.userId})
+        .then(theUser => {
+            console.log("Printing Users");
+            console.log(theUser)
+
+        })
+        
+        .catch(error => console.log(error));
+    
+        //Compare user in in token with the request id
+/*           if(decode.userId == req.body.id){
+            console.log("We Can continue to end point");
+            res.status(200).json({message : "The requester IS the Owner "});
+            //go to next middlware
+            next();
+        }else{
+            console.log("Requester IS NOT the owner req.body AND request-id is");
+            console.log(req.body);
+            console.log(decode.userId);
+
+            throw new Error("Error :> Requester IS NOT the owner");
+        }
+*/
+    }
+}
+
+
 
 exports.checkToken = (req, res, next) => {
     try {
@@ -29,7 +90,7 @@ exports.checkToken = (req, res, next) => {
                 console.log(decode);
                 console.log(decode.userId);
                 console.log("REQ BODY IS");
-                console.log(req.body);
+                console.log(req);
                 //Compare user in in token with the request id
      /*           if(decode.userId == req.body.id){
                     console.log("We Can continue to end point");

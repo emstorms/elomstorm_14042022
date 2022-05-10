@@ -11,7 +11,8 @@ const ACCEPTED_MIME = {'image/jpg':'jpg',
     },
     filename: (req,theFile,callback)=> {
         //replacing white space with underscore
-        const name = theFile.originalname.split('/([\s\.])/').join('_');
+        const name = theFile.originalname.split(' ').join('_');
+        
         //setting accepted file mime
         const mime_extension = ACCEPTED_MIME[theFile.mimetype];
         //setting new name with name + date + extension (mime)

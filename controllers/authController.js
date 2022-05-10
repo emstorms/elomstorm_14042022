@@ -19,8 +19,8 @@ exports.login = (req, res, next) => {
                 //if user exists compare password
                 bcrypt.compare(req.body.password, email.password)
                     .then(isCorrectPasswd => {
-                        if(!isCorrectPasswd){
-                            return res.status(401).json({message:"Votre mot de passe est incorrect"});
+                        if (!isCorrectPasswd) {
+                            return res.status(401).json({ message: "Votre mot de passe est incorrect" });
                         }
                         console.log("mot de passe correct");
                         res.status(200).json({
@@ -32,26 +32,26 @@ exports.login = (req, res, next) => {
                             )
                         })
                         console.log("=>>>>>>LOGIN THAT iS OK");
-                        
-                        
+
+
                         next();
                     })
                     .catch(error => res.status(400).json({ error }));
             })
             .catch(error => res.status(400).json({ error }))
     }
-    catch(error){
+    catch (error) {
         console.log("LOGIN ERROR");
         console.log(error);
-        res.status(400).json({error}).send(console.log(error));
+        res.status(400).json({ error }).send(console.log(error));
     }
-    
+
 };
 
 
 
 //subscription
-exports.signup = (req, res,next) => {
+exports.signup = (req, res, next) => {
     //hash then save the user model
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -62,13 +62,19 @@ exports.signup = (req, res,next) => {
 
             //saving the user
             user.save()
-                .then(() => res.status(201).json({ message: "Votre compte a bien été créee" }))
-                // .catch(error => {console.log("ERROOR\n=======>");console.log(error))
+                .then(() => {
+                    res.status(201).json({ message: "Votre compte a bien été créee" });
+                    next();
+                     }) 
                 .catch(error => res.status(400).json({ error }).send(console.log(error)));
-            console.log(user);
-            next();
-        })
-        .catch(error => res.status(500).json({ error: error }));
+
+    // .catch(error => {console.log("ERROOR\n=======>");console.log(error))
+
+    console.log("USER IS CREATE");
+    console.log(user);
+
+})
+        .catch (error => res.status(500).json({ error: error }));
 };
 
 
