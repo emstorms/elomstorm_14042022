@@ -65,6 +65,7 @@ exports.currentSauce = (req,res,next) =>{
         console.log(laSauce);
         res.status(200).json(laSauce);
         // res.status(200).json(laSauce).send(console.log(laSauce))
+        next();
     })
     .catch(error => {
         console.log("ERREUR >>>>>>>");
@@ -73,7 +74,7 @@ exports.currentSauce = (req,res,next) =>{
     })
     
  
-    // next();
+    
 };
 
 exports.initializeSauce = (req,res,next) => {
@@ -84,9 +85,12 @@ exports.initializeSauce = (req,res,next) => {
     // console.log("===== PArse req is");
     const parse_sauce = JSON.parse(req.body.sauce);
     console.log(parse_sauce);
+    delete parse_sauce._id;
+    console.log("NEW SAUCE SANS ID =>>>>>");
+    console.log(parse_sauce);
     //Creating Sauce
     const newSauce = new sauceModel({
-        // delete parse_sauce._id,
+        
         ...parse_sauce,
         // imageUrl : protocol://Host:port/imageFolder/imagename
         imageUrl :`${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`,
@@ -97,19 +101,24 @@ exports.initializeSauce = (req,res,next) => {
         usersDisliked:[]
     });
 
+    console.log("SAUCE URL");
+    console.log(newSauce);
+
     //Save in Database
     newSauce.save()
         .then(laSauce => {
-            console.log(`Votre Sauce ${laSauce.name} a bien été créee créée`);
+            console.log(`Votre Sauce ${laSauce.name} a bien été créee Sauvegardée`);
             res.status(201).json({message: `Votre Sauce ${laSauce.name} a bien été créee création`});
+              next();
         })
         .catch(err => {
             console.log(">>>Il y a une erreur pendant ma sauvegarde de la sauce<<<<");
-            console.log(err);
+            // console.log(err);
+            // res.status(400).json(error);
             res.status(401).json({message:`Error : ${err}`});
         });
        
-        next();
+      
 };
 
 
