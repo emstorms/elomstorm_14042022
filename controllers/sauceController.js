@@ -124,7 +124,8 @@ exports.updateSauce = (req,res,next) => {
 
 exports.deleteSauce = (req, res, next) => {
     //Delete the current given sauce in Id
-    console.log("\n#####in Delete Sauce");
+    console.log("\n#####in Delete Sauce####");
+    res.status(200).json({message : "IN DELETE SAUCE ==Reponse=="});
 }
 
 

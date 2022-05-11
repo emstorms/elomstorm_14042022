@@ -1,6 +1,7 @@
 //Check if the user id that send the request is the same as the subbscription's one
 const verif_user_token = require("jsonwebtoken");
 const userDb = require('../models/UserModel')
+const SauceModel = require('../models/SauceModel');
 
 //We got 2 kind of verification
 //First -> only members can see all Sauce check in token if user id exist in db
@@ -9,33 +10,67 @@ const userDb = require('../models/UserModel')
 exports.checkTokenIsMember = (req, res, next) => {
     try {
 
-        if(userExistsWithTokenID(req, res)){
+        if (userExistsWithTokenID(req, res)) {
             //  res.status(200).json({ message: "USer is found" });
-             console.log("User found");
-             next();
-        }else{
+            console.log("User found");
+            next();
+        } else {
             //If TOken does'nt match Db user, throw error
             console.log("TOKEN CHECK FAIL");
             throw new Error("You Have to Create an account to have access to this page");
         }
 
-    }catch (err) {
+    } catch (err) {
         console.log("IN CATCH Error IS TROWN");
-        res.status(401).json({message : "AuthoriZE FAIL"}).send(console.log(`Authorize FAILED Error Message ${err}`));
+        res.status(401).json({ message: "AuthoriZE FAIL" }).send(console.log(`Authorize FAILED Error Message ${err}`));
     }
-   
+
 }
+/*
+?????????????
 
-exports.checkIsSauceOwner = (req,res,next) => {
-    try{
-        //check is user exists in DB
-        if(userExistsWithTokenID(req,res)){
-            console.log("User FOUND in the CHecksauce owener");
-        }else{
+function getSauceWithId(req,res){
+    console.log("in GET SAUCE WITH iD >>>>>>>>");
+    SauceModel.findOne({_id:req.params.id})
+    .then(laSauce => {
+        console.log("Sauce Trouvée >>>>>>>>")
+        console.log(laSauce);
+        // res.status(200).json(laSauce);
+        // // res.status(200).json(laSauce).send(console.log(laSauce));
+        // next();
+        return laSauce;
+    })
+    .catch(error => {
+        console.log("ERREUR >>>>>>>");
+        console.log(error);
+        return false;
+        // res.status(401).json({error: error});
+    })
+}*/
 
-        }
-    }catch (err){
+exports.checkIsSauceOwner = (req, res, next) => {
+    try {
+        //checked by previous middelware if user exists in DB
+        //check in Sauce database if the user id match with the token id
+        console.log(">>>>>> DANS CHECK IS OWNER ");
+        SauceModel.findOne({ _id: req.params.id })
+            .then(laSauce => {
+                console.log("Sauce Trouvée dans DB>>>>>>>>")
+                console.log(laSauce);
+               
+                
+            })
+            .catch(error => {
+                console.log("ERREUR >>>>>>>");
+                console.log(error);
 
+                // res.status(401).json({error: error});
+            })
+        next();
+    } catch (err) {
+        console.log("[[[[[[[[IN CATCH FOR check sauce is Owner]]]]");
+        console.log(err);
+        res.status(401).json({ message: "AUthorize FAIL, User IS not OWNER => CAN'T EDIT SAUCE" });
     }
 }
 
@@ -45,33 +80,33 @@ function userExistsWithTokenID(req, res) {
         //Throw error // Request may be sent from bad form or source
         throw new Error("PAs de autorize dans la requete Veuillez à Utiliser le formulaire de connexion pour vous connecter avant de poursuivre");
     }
-   
+
     const is_token = (req.headers.authorization.split(' ')[1]);
     if (is_token == "") {
-          console.log("TOken is empty");
-          throw new Error("THat Token is empty");
+        console.log("TOken is empty");
+        throw new Error("THat Token is empty");
     }
-        //is token is not empty decode
-        console.log("\nIM LOGGGING THE TOKEN");
-        console.log(is_token);
-        const decode = verif_user_token.verify(is_token, process.env.TOKEN_ENCODE_CODE);  
+    //is token is not empty decode
+    console.log("\nIM LOGGGING THE TOKEN");
+    console.log(is_token);
+    const decode = verif_user_token.verify(is_token, process.env.TOKEN_ENCODE_CODE);
     //Searching user in db
-         userDb.findOne({ _id: decode.userId })
-            .then(theUser => {
-                  //IF user does'nt exists He cant see all Sauce
-                    if(!theUser) {
-                        console.log(" Vous devriez créer un compte avant de poursuivre sur cette page");
-                        throw new Error("Vous devriez créer un compte avant de poursuivre sur cette page");
-                      }
-                      
-              })
-              .catch(error => {
-                  res.json({ error: error }).send(error => console.log(error));
-                  throw new Error("User does'nt exist in Database"); 
-                  
-                })
+    userDb.findOne({ _id: decode.userId })
+        .then(theUser => {
+            //IF user does'nt exists He cant see all Sauce
+            if (!theUser) {
+                console.log(" Vous devriez créer un compte avant de poursuivre sur cette page");
+                throw new Error("Vous devriez créer un compte avant de poursuivre sur cette page");
+            }
+
+        })
+        .catch(error => {
+            res.json({ error: error }).send(error => console.log(error));
+            throw new Error("User does'nt exist in Database");
+
+        })
     return true;
- 
+
 }
 
 
@@ -120,7 +155,7 @@ exports.checkToken = (req, res, next) => {
                                throw new Error("Error :> Requester IS NOT the owner");
                            }
                */
-              next();
+                next();
 
             } else {
                 throw new Error("Token is empty");
