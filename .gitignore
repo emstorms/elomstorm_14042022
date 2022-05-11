@@ -1,4 +1,4 @@
-node_modules/
-.env
-savejs_.js
-images_folder
+/node_modules
+./.env
+./savejs_.js
+./images_folder
