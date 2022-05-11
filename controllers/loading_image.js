@@ -8,6 +8,7 @@ const ACCEPTED_MIME = {'image/jpg':'jpg',
                        const storage = multer.diskStorage({
     destination: (req,theFile,callback) =>{
         callback(null,'images_folder')
+        // callback(null,'images')
     },
     filename: (req,theFile,callback)=> {
         //replacing white space with underscore

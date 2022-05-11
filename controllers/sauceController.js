@@ -44,7 +44,7 @@ exports.listSauce = (req,res,next) => {
     SauceModel.find()
     .then(listSauce => {
         res.status(200).json(listSauce);
-        // next();
+        next();
     })
     .catch(error => res.status(402).json({message:"Cant show list of Sauces"}).send(console.log(`ERROR LIST SAUCE ${error}`)));
 };
@@ -54,10 +54,10 @@ exports.currentSauce = (req,res,next) =>{
     console.log('IN GET SAuce');
     SauceModel.findOne({_id:req.params.id})
     .then(laSauce => {
-        console.log("Sacue Trouvée >>>>>>>>")
+        console.log("Sauce Trouvée >>>>>>>>")
         console.log(laSauce);
         res.status(200).json(laSauce);
-        // res.status(200).json(laSauce).send(console.log(laSauce))
+        // res.status(200).json(laSauce).send(console.log(laSauce));
         next();
     })
     .catch(error => {
@@ -87,6 +87,7 @@ exports.initializeSauce = (req,res,next) => {
         ...parse_sauce,
         // imageUrl : protocol://Host:port/imageFolder/imagename
         imageUrl :`${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`,
+        // imageUrl :`${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
         //Initializate likes and dislikes to 0
         likes:0,
         dislikes:0,
@@ -101,6 +102,7 @@ exports.initializeSauce = (req,res,next) => {
     newSauce.save()
         .then(laSauce => {
             console.log(`Votre Sauce ${laSauce.name} a bien été créee Sauvegardée`);
+            
             res.status(201).json({message: `Votre Sauce ${laSauce.name} a bien été créee création`});
               next();
         })
@@ -122,6 +124,7 @@ exports.updateSauce = (req,res,next) => {
 
 exports.deleteSauce = (req, res, next) => {
     //Delete the current given sauce in Id
+    console.log("\n#####in Delete Sauce");
 }
 
 

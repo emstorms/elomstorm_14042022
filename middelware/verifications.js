@@ -24,17 +24,23 @@ exports.checkTokenIsMember = (req, res, next) => {
         res.status(401).json({message : "AuthoriZE FAIL"}).send(console.log(`Authorize FAILED Error Message ${err}`));
     }
    
+}
 
+exports.checkIsSauceOwner = (req,res,next) => {
+    try{
+        //check is user exists in DB
+        if(userExistsWithTokenID(req,res)){
+            console.log("User FOUND in the CHecksauce owener");
+        }else{
 
+        }
+    }catch (err){
+
+    }
 }
 
 function userExistsWithTokenID(req, res) {
 
-    const t = 3;
-    if(t == 2){
-        throw new Error("T must not be 2");
-    }
-    
     if (!req.headers.hasOwnProperty("authorization")) {
         //Throw error // Request may be sent from bad form or source
         throw new Error("PAs de autorize dans la requete Veuillez à Utiliser le formulaire de connexion pour vous connecter avant de poursuivre");
