@@ -8,7 +8,7 @@ const multer_1_img = require('../controllers/loading_image');
 
 router.post('/',verification.checkTokenIsMember,multer_1_img,sauceController.initializeSauce);
 // router.get('/',verification.checkToken, sauceController.currentSauce);
-// router.put('/:id',verification.checkToken,sauceController.updateSauce);
+router.put('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,sauceController.updateSauce);
 router.delete('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,sauceController.deleteSauce);
 
 // router.get('/',verification.checkTokenIsMember);

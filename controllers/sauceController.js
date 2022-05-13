@@ -84,7 +84,7 @@ exports.initializeSauce = (req,res,next) => {
     console.log("NEW SAUCE SANS ID =>>>>>");
     console.log(parse_sauce);
     //Creating Sauce
-    const newSauce = new sauceModel({
+    const newSauce = new SauceModel({
         
         ...parse_sauce,
         // imageUrl : protocol://Host:port/imageFolder/imagename
@@ -133,13 +133,19 @@ exports.deleteSauce = (req, res, next) => {
          console.log(laSauce);
          //Trouver le nom de fichier image dans sauce.imageUrl
         const image_name = laSauce.imageUrl.split('images_folder')[1];
-        console.log("SAUCE IMAGE NAME >>><");
-        console.log(image_name);
-         //SUpprimer la sauce
-        //  SauceModel.deleteOne({_id:laSauce._id})
-        //    .then()
-        //    .catch();
-         res.status(200).json({message : "La sauce est supprimée"});
+        //"Supprimer image dans le serveur avec fs.unlink 
+        fs.unlink(`images_folder/${image_name}`, () => {
+                //SUpprimer la sauce
+         SauceModel.deleteOne({_id:laSauce._id})
+           .then(() => {
+               res.status(200).json({message : "Sauce supprimé dans Database ainsi que des les fichiers images correspondant sur le serveur "});
+                next();
+            })
+           .catch(error => res.status(500).json({error}));
+        })
+
+         
+        //  res.status(200).json({message : "La sauce est supprimée"});
      })
      .catch(error =>{
         console.log(error);
