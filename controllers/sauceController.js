@@ -121,6 +121,16 @@ exports.initializeSauce = (req,res,next) => {
 
 exports.updateSauce = (req,res,next) => {
     //update the existing sauce with the given id
+    console.log("IN SAUCE UPDATE");
+    //searching the Sauce to update
+    SauceModel.updateOne({_id:req.params.id}, {...req.body , _id: req.params.id,imageUrl :`${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`})
+      .then(() => {
+          console.log("PRODUIT EST Bien Modifié");
+          res.status(200).json({message : "Sauce Modifié "});
+      })
+      .catch(error => res.status(400).json({error}));
+
+    // res.status(200).json({message : "IN SAUCE Update"});
 
 }
 
