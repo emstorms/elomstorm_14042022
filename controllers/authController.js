@@ -28,7 +28,7 @@ exports.login = (req, res, next) => {
                             token: token.sign(
                                 { userId: email._id },
                                 `${process.env.TOKEN_ENCODE_CODE}`,
-                                { expiresIn: '24h' }
+                                { expiresIn: '48h' }
                             )
                         })
                         console.log("=>>>>>>LOGIN THAT iS OK");

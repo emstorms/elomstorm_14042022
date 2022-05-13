@@ -2,7 +2,9 @@
 
 const { json } = require('express');
 const SauceModel = require('../models/SauceModel');
-const sauceModel = require('../models/SauceModel');
+//importation de fileSystem de node >fs<
+const fs = require('fs');
+// const sauceModel = require('../models/SauceModel');
 //Import loading image contollers
 /*
 const sauceSchema = ({
@@ -125,7 +127,25 @@ exports.updateSauce = (req,res,next) => {
 exports.deleteSauce = (req, res, next) => {
     //Delete the current given sauce in Id
     console.log("\n#####in Delete Sauce####");
-    res.status(200).json({message : "IN DELETE SAUCE ==Reponse=="});
+    SauceModel.findOne({_id : req.params.id})
+     .then(laSauce => {
+         console.log("La sauce A supprimer");
+         console.log(laSauce);
+         //Trouver le nom de fichier image dans sauce.imageUrl
+        const image_name = laSauce.imageUrl.split('images_folder')[1];
+        console.log("SAUCE IMAGE NAME >>><");
+        console.log(image_name);
+         //SUpprimer la sauce
+        //  SauceModel.deleteOne({_id:laSauce._id})
+        //    .then()
+        //    .catch();
+         res.status(200).json({message : "La sauce est supprimée"});
+     })
+     .catch(error =>{
+        console.log(error);
+         res.status(400).json({message : "Cette sauce n'appartient pas au lanceur de la requete, donc impossible de supprimer"});
+     }); 
+
 }
 
 

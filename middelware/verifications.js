@@ -57,16 +57,28 @@ exports.checkIsSauceOwner = (req, res, next) => {
             .then(laSauce => {
                 console.log("Sauce Trouvée dans DB>>>>>>>>")
                 console.log(laSauce);
-               
-                
+                //Check sauce userID with Token ID
+                //TOKEN ID
+                const is_token = (req.headers.authorization.split(' ')[1]);
+                const decode = verif_user_token.verify(is_token, process.env.TOKEN_ENCODE_CODE);
+                const tokenUserID = decode.userId;
+                console.log("TOKEN ID");
+                console.log(tokenUserID);
+                if(tokenUserID == laSauce.userId){
+                    console.log("OKAY The USer is the owner We can 'next' the middlware");
+                    next()
+                }else{
+                    console.log("IH NOP This user is not the Owner");
+                    throw new Error("Erreur =>L'utilisateur n'est pas autorisé");
+                }                        
             })
             .catch(error => {
                 console.log("ERREUR >>>>>>>");
                 console.log(error);
-
-                // res.status(401).json({error: error});
+                
+                // res.status(401).json({error: error}).send(error);
             })
-        next();
+        // next();
     } catch (err) {
         console.log("[[[[[[[[IN CATCH FOR check sauce is Owner]]]]");
         console.log(err);
