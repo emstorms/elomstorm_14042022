@@ -15,7 +15,7 @@ router.delete('/:id',verification.checkTokenIsMember,verification.checkIsSauceOw
 // router.get('/',sauceController.listSauce);
 router.get('/',verification.checkTokenIsMember,sauceController.listSauce);
 router.get('/:id',verification.checkTokenIsMember,sauceController.currentSauce);
-
+router.post('/:id/like',sauceController.polling);
 // router.get('/',verification.checkToken,sauceController.listSauce);
 
 
