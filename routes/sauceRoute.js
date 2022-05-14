@@ -20,10 +20,15 @@ router.delete('/:id',verification.authorize,verification.checkIsSauceOwner,sauce
 
 
 router.get('/',verification.authorize,sauceController.listSauce);
-
+// 
 router.get('/:id',verification.authorize,sauceController.currentSauce);
-router.post('/:id/like',sauceController.polling);
+router.post('/:id/like',sauceController.polling2);
 // router.get('/',verification.checkToken,sauceController.listSauce);
 
 
 module.exports = router;
+ //Update Sauce id database
+            // SauceModel.updateOne({_id : laSauce._id} , {...copySauce})
+            // .then(res.status(200).json({message :"Sauce polling correctly updated"}))
+            // .catch(res.status(400).json({message : "can't update Sauce"}));
+   

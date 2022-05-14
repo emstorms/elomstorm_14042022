@@ -124,11 +124,11 @@ exports.updateSauce = (req, res, next) => {
     console.log("IN SAUCE UPDATE");
     //searching the Sauce to update
     const sauceModified = req.file ?
-    {
-        ...req.body,
-        imageUrl: `${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`
-    }:
-    {...req.body};
+        {
+            ...req.body,
+            imageUrl: `${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`
+        } :
+        { ...req.body };
     SauceModel.updateOne({ _id: req.params.id }, { ...sauceModified, _id: req.params.id })
         .then(() => {
             console.log("PRODUIT EST Bien Modifié");
@@ -252,16 +252,85 @@ function findUserInPoll(res, req, userId, laSauce, poll_choice) {
 
 function updateSaucePoll(res, req, likeArr, dislikeArr) {
     console.log("\n>>>>>>IN UPDATE SAUCE");
-    SauceModel.updateOne({_id : req.params.id},{usersLiked : likeArr, usersDislike : dislikeArr,likes : likeArr.length,dislikes : dislikeArr.length})
-    .then(() => res.status(200).json({message : "Votre bien pris en compte"}))
-    // .catch(error => throw new Error (res.status(401).json({error}));
-    .catch(error => {
-        // throw new Error ("ERROR IN UPDATE Function"))
-        console.log("Error : "+error);
-    });
+    SauceModel.updateOne({ _id: req.params.id }, { usersLiked: likeArr, usersDislike: dislikeArr, likes: likeArr.length, dislikes: dislikeArr.length })
+        .then(() => res.status(200).json({ message: "Votre bien pris en compte" }))
+        // .catch(error => throw new Error (res.status(401).json({error}));
+        .catch(error => {
+            // throw new Error ("ERROR IN UPDATE Function"))
+            console.log("Error : " + error);
+        });
 
-    
+
 }
+exports.polling2 = (req, res, next) => {
+    try {
+        console.log(">>>>>>>>>>IN POLLING 2");
+        SauceModel.findOne({ _id: req.params.id })
+          .then(laSauce => {
+              const copySauce = laSauce;
+              console.log(req.body);
+              console.log(laSauce.usersDisliked);
+              //clean user in like and displike array
+              for (let i = 0; i < laSauce.usersDisliked.length; ++i) {
+                console.log("<<<<<<<<CONTENU DE FindUserInPOll>>>");
+                if (laSauce.usersDisliked[i] == req.userId) {
+                    console.log(`UserId  found in like array`);
+                    //delete in the array
+                    laSauce.usersDisliked.splice(i, 1);
+                    //update likes
+
+                }
+            }
+            console.log("cleaned DISLIKED ");         
+            //deleteing in dislikeArray
+            for (let i = 0; i < laSauce.usersLiked.length; ++i) {
+
+                if (laSauce.usersLiked[i] == req.userId) {
+                    console.log(`Userid found in like array`);
+                    //delete id dislike array likeArray.splice(i,1);
+                    laSauce.usersLiked.splice(i, 1);
+                    //update dislike
+                }
+            }
+
+  
+            if(req.body.like == 1 ){
+                //add user in usersLiked array
+                laSauce.usersLiked = req.body.userId;
+            }
+            if(req.body.like == -1 ){
+                //add user in usersLiked array
+                laSauce.usersDisliked = req.body.userId;
+            }
+            if(req.body.like ==0 ){
+                console.log("DELETE IN BOTH++++++++++++");
+                //DELETE USer in BOTH LIKE NAD DIslike Array
+                //add user in usersLiked array
+              
+            }
+            laSauce.dislikes = laSauce.usersDisliked.length;
+            laSauce.likes = laSauce.usersLiked.length;
+            console.log("Sauce Parès like ou dislike");
+            console.log(laSauce);
+            console.log("COPY Sauce");
+            console.log(copySauce);
+            //Update Sauce id database
+
+           
+   
+            // console.log(laSauce);
+           res.status(200).json({message :"IN polling 2"});
+        //    next();
+            
+            })
+          .catch(error => res.status(400).json({message :"Nous ne trouvons pas la sauce"}));
+          
+          
+    } catch (err) {
+        console.log("TRY CATCH ERROR");
+        res.status(400).json({message : "TRY CATCh Error"});
+    }
+};
 
 
 exports.polling = (req, res, next) => {
@@ -350,16 +419,15 @@ exports.polling = (req, res, next) => {
                 // res.status(200).json({ message: "Vote prise en compte et mise à jour de la sauce" });
             })
             .catch(error => res.status(400).json({ message: "On ne trouve pas la Sauce" }));
-            // .catch(error => throw new Error("On ne trouve pas la Sauce" ));
+        // .catch(error => throw new Error("On ne trouve pas la Sauce" ));
 
         //delete
         // res.status(200).json({message : "IN POLLING"});
     } catch (err) {
         console.log("TRY CATCH Error ");
         console.log(err);
-        res.status(400).json({message : "Erreur lors de la Mise à jour des votes"});
+        res.status(400).json({ message: "Erreur lors de la Mise à jour des votes" });
     }
-
 }
 
 
