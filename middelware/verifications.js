@@ -47,6 +47,28 @@ function getSauceWithId(req,res){
         // res.status(401).json({error: error});
     })
 }*/
+exports.authorize = (req, res, next) => {
+    try {
+        console.log("AUUUTORIZE>>> ");
+      const token = req.headers.authorization.split(" ")[1]; 
+     
+      const decodedToken = verif_user_token.verify(token, process.env.TOKEN_ENCODE_CODE); 
+      const userId = decodedToken.userId; 
+     
+      req.auth = { userId };
+       
+     
+      if (req.body.userId && req.body.userId !== userId) {
+          console.log(">>>>>>>IN IF");
+        throw "User Id non valable !";                     
+      } else {
+          console.log(">>>>>>IN ELSE");
+        next();
+      }
+    } catch (error) {
+      res.status(401).json({ error: error | "requête non authentifiée !" });
+    }
+  };
 
 exports.checkIsSauceOwner = (req, res, next) => {
     try {

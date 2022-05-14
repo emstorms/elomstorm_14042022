@@ -8,13 +8,20 @@ const multer_1_img = require('../controllers/loading_image');
 
 router.post('/',verification.checkTokenIsMember,multer_1_img,sauceController.initializeSauce);
 // router.get('/',verification.checkToken, sauceController.currentSauce);
-router.put('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,multer_1_img,sauceController.updateSauce);
-router.delete('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,sauceController.deleteSauce);
+// router.put('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,multer_1_img,sauceController.updateSauce);
+// router.delete('/:id',verification.checkTokenIsMember,verification.checkIsSauceOwner,sauceController.deleteSauce);
+router.put('/:id',verification.authorize,verification.checkIsSauceOwner,multer_1_img,sauceController.updateSauce);
+router.delete('/:id',verification.authorize,verification.checkIsSauceOwner,sauceController.deleteSauce);
 
 // router.get('/',verification.checkTokenIsMember);
 // router.get('/',sauceController.listSauce);
-router.get('/',verification.checkTokenIsMember,sauceController.listSauce);
-router.get('/:id',verification.checkTokenIsMember,sauceController.currentSauce);
+// router.get('/',verification.checkTokenIsMember,sauceController.listSauce);
+// router.get('/:id',verification.checkTokenIsMember,sauceController.currentSauce);
+
+
+router.get('/',verification.authorize,sauceController.listSauce);
+
+router.get('/:id',verification.authorize,sauceController.currentSauce);
 router.post('/:id/like',sauceController.polling);
 // router.get('/',verification.checkToken,sauceController.listSauce);
 

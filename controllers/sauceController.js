@@ -123,12 +123,24 @@ exports.updateSauce = (req, res, next) => {
     //update the existing sauce with the given id
     console.log("IN SAUCE UPDATE");
     //searching the Sauce to update
-    SauceModel.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id, imageUrl: `${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}` })
+    const sauceModified = req.file ?
+    {
+        ...req.body,
+        imageUrl: `${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}`
+    }:
+    {...req.body};
+    SauceModel.updateOne({ _id: req.params.id }, { ...sauceModified, _id: req.params.id })
         .then(() => {
             console.log("PRODUIT EST Bien Modifié");
             res.status(200).json({ message: "Sauce Modifié " });
         })
         .catch(error => res.status(400).json({ error }));
+    // SauceModel.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id, imageUrl: `${req.protocol}://${req.get('host')}/images_folder/${req.file.filename}` })
+    //     .then(() => {
+    //         console.log("PRODUIT EST Bien Modifié");
+    //         res.status(200).json({ message: "Sauce Modifié " });
+    //     })
+    //     .catch(error => res.status(400).json({ error }));
 
     // res.status(200).json({message : "IN SAUCE Update"});
 
@@ -240,7 +252,7 @@ function findUserInPoll(res, req, userId, laSauce, poll_choice) {
 
 function updateSaucePoll(res, req, likeArr, dislikeArr) {
     console.log("\n>>>>>>IN UPDATE SAUCE");
-   /* SauceModel.updateOne({_id : req.params.id},{usersLiked : likeArr, usersDislike : dislikeArr,likes : likeArr.length,dislikes : dislikeArr.length})
+    SauceModel.updateOne({_id : req.params.id},{usersLiked : likeArr, usersDislike : dislikeArr,likes : likeArr.length,dislikes : dislikeArr.length})
     .then(() => res.status(200).json({message : "Votre bien pris en compte"}))
     // .catch(error => throw new Error (res.status(401).json({error}));
     .catch(error => {
@@ -248,7 +260,7 @@ function updateSaucePoll(res, req, likeArr, dislikeArr) {
         console.log("Error : "+error);
     });
 
-    */
+    
 }
 
 
@@ -335,7 +347,7 @@ exports.polling = (req, res, next) => {
 
                 //Test Showing Sauce
                 console.log(laSauce);
-                res.status(200).json({ message: "Vote prise en compte et mise à jour de la sauce" });
+                // res.status(200).json({ message: "Vote prise en compte et mise à jour de la sauce" });
             })
             .catch(error => res.status(400).json({ message: "On ne trouve pas la Sauce" }));
             // .catch(error => throw new Error("On ne trouve pas la Sauce" ));
