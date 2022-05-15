@@ -22,7 +22,7 @@ router.delete('/:id',verification.authorize,verification.checkIsSauceOwner,sauce
 router.get('/',verification.authorize,sauceController.listSauce);
 // 
 router.get('/:id',verification.authorize,sauceController.currentSauce);
-router.post('/:id/like',sauceController.polling2);
+router.post('/:id/like',verification.authorize,sauceController.polling2);
 // router.get('/',verification.checkToken,sauceController.listSauce);
 
 
@@ -32,3 +32,41 @@ module.exports = router;
             // .then(res.status(200).json({message :"Sauce polling correctly updated"}))
             // .catch(res.status(400).json({message : "can't update Sauce"}));
    
+
+            /*            
+            laSauce.dislikes = laSauce.usersDisliked.length;
+            laSauce.likes = laSauce.usersLiked.length;
+            console.log("Sauce Parès like ou dislike");
+            console.log(laSauce);
+            console.log("COPY Sauce");
+               for (let i = 0; i < copySauce.usersDisliked.length; ++i) {
+                console.log("<<<<<<<<CONTENU DE FindUserInPOll>>>");
+                if (copySauce.usersDisliked[i] == req.userId) {
+                    console.log(`UserId  found in like array`);
+                    //delete in the array
+                    copySauce.usersDisliked.splice(i, 1);
+                    //update likes
+
+                }
+            }
+            console.log("cleaned DISLIKED ");         
+            //deleteing in dislikeArray
+            for (let i = 0; i < copySauce.usersLiked.length; ++i) {
+
+                if (copySauce.usersLiked[i] == req.userId) {
+                    console.log(`Userid found in like array`);
+                    //delete id dislike array likeArray.splice(i,1);
+                    copySauce.usersLiked.splice(i, 1);
+                    //update dislike
+                }
+            }
+            console.log("COPY SAUCE AND SAUCE");
+            console.log(copySauce);
+            console.log(laSauce);
+            //Update Sauce id database
+            copySauce.usersLiked.splice(2, 2);
+           //Update Sauce id database
+            // SauceModel.updateOne({_id : laSauce._id} , {...copySauce})
+            // .then(res.status(200).json({message :"Sauce polling correctly updated"}))
+            // .catch(res.status(400).json({message : "can't update Sauce"}));
+ */  

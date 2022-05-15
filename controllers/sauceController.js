@@ -56,8 +56,8 @@ exports.currentSauce = (req, res, next) => {
     console.log('IN GET SAuce');
     SauceModel.findOne({ _id: req.params.id })
         .then(laSauce => {
-            console.log("Sauce Trouvée >>>>>>>>")
-            console.log(laSauce);
+            // console.log("Sauce Trouvée >>>>>>>>")
+            // console.log(laSauce);
             res.status(200).json(laSauce);
             // res.status(200).json(laSauce).send(console.log(laSauce));
             next();
@@ -231,7 +231,7 @@ function findUserInPoll(res, req, userId, laSauce, poll_choice) {
     switch (like) {
         case (1):
             //add user in like array
-            likeArray.push(req.userId);
+            likeArray.push(req.body.userId);
             updateSaucePoll(res, req, likeArray, dislikeArray);
             break;
         case (0):
@@ -239,7 +239,7 @@ function findUserInPoll(res, req, userId, laSauce, poll_choice) {
             updateSaucePoll(res, req, likeArray, dislikeArray);
             break;
         case (-1):
-            likeArray.push(req.userId);
+            likeArray.push(req.body.userId);
             updateSaucePoll(res, req, likeArray, dislikeArray);
             break;
         default:
@@ -264,75 +264,138 @@ function updateSaucePoll(res, req, likeArr, dislikeArr) {
 }
 exports.polling2 = (req, res, next) => {
     try {
+        let copySauce = {};
         console.log(">>>>>>>>>>IN POLLING 2");
         SauceModel.findOne({ _id: req.params.id })
           .then(laSauce => {
-              const copySauce = laSauce;
-              console.log(req.body);
-              console.log(laSauce.usersDisliked);
-              //clean user in like and displike array
-              for (let i = 0; i < laSauce.usersDisliked.length; ++i) {
-                console.log("<<<<<<<<CONTENU DE FindUserInPOll>>>");
-                if (laSauce.usersDisliked[i] == req.userId) {
-                    console.log(`UserId  found in like array`);
-                    //delete in the array
-                    laSauce.usersDisliked.splice(i, 1);
-                    //update likes
-
-                }
-            }
-            console.log("cleaned DISLIKED ");         
+               copySauce = {...laSauce._doc};
+              //clean user in like and displike array   
             //deleteing in dislikeArray
-            for (let i = 0; i < laSauce.usersLiked.length; ++i) {
+            console.log(">>> SAUCE BEGIN");
+            console.log(laSauce);
 
-                if (laSauce.usersLiked[i] == req.userId) {
+            console.log(">>>COPY SAUCE BEGINING");
+            console.log(copySauce);
+
+
+            for (let i = 0; i < copySauce.usersLiked.length; ++i) {
+
+                if (copySauce.usersLiked[i] == req.body.userId) {
                     console.log(`Userid found in like array`);
                     //delete id dislike array likeArray.splice(i,1);
-                    laSauce.usersLiked.splice(i, 1);
-                    //update dislike
+                    copySauce.usersLiked.splice(i, 1);
+                    //update like
+                    copySauce.likes = copySauce.usersLiked.length;
                 }
             }
+            for (let i = 0; i < copySauce.usersDisliked.length; ++i) {
+                console.log("<<<<<<<<CONTENU DE FindUserInPOll>>>");
+                if (copySauce.usersDisliked[i] == req.body.userId) {
+                    console.log(`UserId  found in like array`);
+                    //delete in the array
+                    copySauce.usersDisliked.splice(i, 1);
+                    //update dislike
+                    copySauce.dislikes = copySauce.usersDisliked.length;
+                }
+            }
+            // console.log(">>> SAUCE BEGIN");
+            // console.log(laSauce);
 
+            // console.log(">>>EMPTY SLICING COPY SAUCE BEGINING");
+            // console.log(copySauce);
+            
   
             if(req.body.like == 1 ){
                 //add user in usersLiked array
-                laSauce.usersLiked = req.body.userId;
+                // copySauce.usersLiked.push(req.body.userId);
+                console.log("req.body.LIKE IS");
+                console.log(req.body.like);
+                copySauce.usersLiked.push(req.body.userId);
+                copySauce.likes = copySauce.usersLiked.length;
             }
-            if(req.body.like == -1 ){
+            //    console.log(">>> SAUCE BEGIN");
+            // console.log(laSauce);
+
+            // console.log(">>>EMPTY SLICING COPY SAUCE BEGINING");
+            // console.log(copySauce);
+            
+        
+
+            if(req.body.like == -1){
                 //add user in usersLiked array
-                laSauce.usersDisliked = req.body.userId;
+                // copySauce.usersDisliked.push(req.body.userId);
+                copySauce.usersDisliked.push(req.body.userId);
+                copySauce.dislikes = copySauce.usersDisliked.length;
             }
+             
+
+
+           
             if(req.body.like ==0 ){
                 console.log("DELETE IN BOTH++++++++++++");
                 //DELETE USer in BOTH LIKE NAD DIslike Array
-                //add user in usersLiked array
-              
-            }
-            laSauce.dislikes = laSauce.usersDisliked.length;
-            laSauce.likes = laSauce.usersLiked.length;
-            console.log("Sauce Parès like ou dislike");
-            console.log(laSauce);
-            console.log("COPY Sauce");
-            console.log(copySauce);
-            //Update Sauce id database
-
+                //add user in usersLiked array    
+                for (let i = 0; i < copySauce.usersLiked.length; ++i) {
+                   
+                    console.log(copySauce.usersLiked[i]);
+                    if (copySauce.usersLiked[i] == req.body.userId) {
+                        
+                        //delete id dislike array likeArray.splice(i,1);
+                        copySauce.usersLiked.splice(i, 1);
+                        //update dislike
+                   
+                    }
+                }   
+                for (let i = 0; i < copySauce.usersDisliked.length; ++i) {
            
-   
-            // console.log(laSauce);
+                    if (copySauce.usersDisliked[i] == req.body.userId) {
+                        console.log(`UserId  found in like array`);
+                        //delete in the array
+                        copySauce.usersDisliked.splice(i, 1);
+                        //update likes
+    
+                    }
+                }    
+            }
+
+            copySauce.likes = copySauce.usersLiked.length;
+            copySauce.dislikes = copySauce.usersDisliked.length;
+            console.log(">>>-1 SAUCE BEGIN");
+            console.log(laSauce);
+
+            console.log(">>>-1EMPTY SLICING COPY SAUCE BEGINING");
+            console.log(copySauce);
+
+
+           //UPDATING Database la sauce
+           laSauce = {...copySauce};
+           console.log("La sauce est maintenant");
+           console.log(laSauce);
+           console.log("Copy Sauce");
+           console.log(copySauce);
+           SauceModel.updateOne({_id : laSauce._id},{...copySauce})
+           .then(res.status(202).json({message : "Sauce modifiée"}))
+           .catch(res.status(400).json({error}));
+/*
+            copySauce.likes = copySauce.usersLiked.length;
+            copySauce.dislikes = copySauce.usersDisliked.length; 
+            console.log(">>> SAUCE");
+            console.log(laSauce);
+
+            console.log(">>>COPY SAUCE");
+            console.log(copySauce);
+
+*/
            res.status(200).json({message :"IN polling 2"});
-        //    next();
-            
             })
-          .catch(error => res.status(400).json({message :"Nous ne trouvons pas la sauce"}));
-          
-          
-    } catch (err) {
+          .catch(error => res.status(400).json({message :"Nous ne trouvons pas la sauce"})); 
+    } catch(err){
         console.log("TRY CATCH ERROR");
         res.status(400).json({message : "TRY CATCh Error"});
     }
 };
 
-
+/*
 exports.polling = (req, res, next) => {
     try {
         console.log("IN POLLING");
@@ -342,7 +405,7 @@ exports.polling = (req, res, next) => {
         SauceModel.findOne({ _id: req.params.id })
             .then(laSauce => {
                 console.log("Dans la Sauce ");
-                //findUserInPoll(req,res,req.userId,laSauce,req.body.userId);
+                //findUserInPoll(req,res,req.bidy.userId,laSauce,req.body.userId);
                 console.log(laSauce);
                 console.log(req.body);
 
@@ -350,7 +413,7 @@ exports.polling = (req, res, next) => {
                  * CONTENU DE FindUserInPOll
                  */
 
-                console.log("CONTENU DE FindUserInPOll");
+ /*               console.log("CONTENU DE FindUserInPOll");
                 let likeArray = laSauce.usersLiked;
                 let dislikeArray = laSauce.usersDisliked;
                 let nbLikes;
@@ -430,7 +493,7 @@ exports.polling = (req, res, next) => {
     }
 }
 
-
+*/
 
 
 /*
